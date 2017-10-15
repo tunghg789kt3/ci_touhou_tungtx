@@ -1,3 +1,6 @@
+import touhou.Player;
+import touhou.PlayerSpell;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -5,15 +8,14 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static java.awt.event.KeyEvent.*;
 
 public class GameCanvas extends JPanel {
 
     BufferedImage background;
-    BufferedImage player;
     BufferedImage enemy;
-
-    int playerX = 384;
-    int playerY = 500;
 
     int enemyY = -20;
 
@@ -26,14 +28,12 @@ public class GameCanvas extends JPanel {
 
     int backGroundY = -2509;
 
-    boolean rightPressed;
-    boolean leftPressed;
-    boolean downPressed;
-    boolean upPressed;
-
     BufferedImage backBuffer;
-
     Graphics backGraphics;
+
+    Player player = new Player();
+    ArrayList<PlayerSpell> spells = new ArrayList<>();
+
 
     public GameCanvas() {
 
@@ -43,7 +43,6 @@ public class GameCanvas extends JPanel {
         try {
             background = ImageIO.read(new File("assets/images/background/0.png"));
             enemy = ImageIO.read(new File("assets/images/enemies/level0/blue/0.png"));
-            player = ImageIO.read(new File("assets/images/players/straight/0.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +55,11 @@ public class GameCanvas extends JPanel {
         backGraphics.drawImage(enemy, enemy1X, enemyY, null);
         backGraphics.drawImage(enemy, enemy2X, enemyY, null);
         backGraphics.drawImage(enemy, enemy3X, enemyY, null);
-        backGraphics.drawImage(player, playerX, playerY, null);
+        player.render(backGraphics);
+
+        for (PlayerSpell spell : spells) {
+            spell.render(backGraphics);
+        }
 
         repaint();
     }
@@ -68,7 +71,6 @@ public class GameCanvas extends JPanel {
             backGroundY += -2509;
         }
     }
-    // 2. Draw
 
 
     @Override
@@ -76,85 +78,27 @@ public class GameCanvas extends JPanel {
         g.drawImage(backBuffer, 0, 0, null);
     }
 
-
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rightPressed = true;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            leftPressed = true;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            downPressed = true;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            upPressed = true;
-        }
+        player.keyPressed(e);
     }
 
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rightPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            leftPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            downPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            upPressed = false;
-        }
+        player.keyReleased(e);
 
+    }
+
+    public void run() {
+        player.run();
+        player.shoot(spells);
+        for (PlayerSpell spell : spells) {
+            spell.run();
+        }
     }
 
     public void enemiesRun() {
         enemyY += 1;
-        if (enemyY >= 600){
+        if (enemyY >= 600) {
             enemyY = -50;
-        }
-    }
-
-    public void run() {
-        int vx = 0;
-        int vy = 0;
-
-        if (rightPressed) {
-            vx += 3;
-        }
-
-        if (leftPressed) {
-            vx -= 3;
-        }
-
-        if (downPressed) {
-            vy += 3;
-        }
-
-        if (upPressed) {
-            vy -= 3;
-        }
-        playerX = playerX + vx;
-        playerY = playerY + vy;
-
-        if (playerX <= 188) {
-            playerX = 188;
-        } else if (playerX >= 572) {
-            playerX = 572;
-        }
-
-        if (playerY <= -24) {
-            playerY = -24;
-        } else if (playerY >= 550) {
-            playerY = 550;
-        }
-
-        if (playerX <= 188 && playerY <= -24) {
-            playerX = 188;
-            playerY = -24;
-        } else if (playerX >= 572 && playerY >= 550) {
-            playerX = 572;
-            playerY = 550;
         }
     }
 }
