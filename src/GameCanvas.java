@@ -1,3 +1,5 @@
+import touhou.Enemies;
+import touhou.EnemiesBullets;
 import touhou.Player;
 import touhou.PlayerSpell;
 
@@ -15,16 +17,6 @@ import static java.awt.event.KeyEvent.*;
 public class GameCanvas extends JPanel {
 
     BufferedImage background;
-    BufferedImage enemy;
-
-    int enemyY = -20;
-
-    int enemy1X = 254;
-
-    int enemy2X = 382;
-
-    int enemy3X = 510;
-
 
     int backGroundY = -2509;
 
@@ -32,7 +24,9 @@ public class GameCanvas extends JPanel {
     Graphics backGraphics;
 
     Player player = new Player();
+    Enemies enemies = new Enemies();
     ArrayList<PlayerSpell> spells = new ArrayList<>();
+    ArrayList<EnemiesBullets> bullets = new ArrayList<>();
 
 
     public GameCanvas() {
@@ -42,7 +36,6 @@ public class GameCanvas extends JPanel {
         // 1. Load
         try {
             background = ImageIO.read(new File("assets/images/background/0.png"));
-            enemy = ImageIO.read(new File("assets/images/enemies/level0/blue/0.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,13 +45,15 @@ public class GameCanvas extends JPanel {
 
     public void render() {
         backGraphics.drawImage(background, 204, backGroundY, null);
-        backGraphics.drawImage(enemy, enemy1X, enemyY, null);
-        backGraphics.drawImage(enemy, enemy2X, enemyY, null);
-        backGraphics.drawImage(enemy, enemy3X, enemyY, null);
         player.render(backGraphics);
+        enemies.render(backGraphics);
 
         for (PlayerSpell spell : spells) {
             spell.render(backGraphics);
+        }
+
+        for (EnemiesBullets bullets : bullets){
+            bullets.render(backGraphics);
         }
 
         repaint();
@@ -93,12 +88,10 @@ public class GameCanvas extends JPanel {
         for (PlayerSpell spell : spells) {
             spell.run();
         }
-    }
-
-    public void enemiesRun() {
-        enemyY += 1;
-        if (enemyY >= 600) {
-            enemyY = -50;
+        enemies.run();
+        enemies.shoot(bullets);
+        for (EnemiesBullets bullets: bullets){
+            bullets.run();
         }
     }
 }
