@@ -1,3 +1,4 @@
+import bases.GameObject;
 import touhou.Enemies;
 import touhou.EnemiesBullets;
 import touhou.Player;
@@ -24,9 +25,7 @@ public class GameCanvas extends JPanel {
     Graphics backGraphics;
 
     Player player = new Player();
-    Enemies enemies = new Enemies();
-    ArrayList<PlayerSpell> spells = new ArrayList<>();
-    ArrayList<EnemiesBullets> bullets = new ArrayList<>();
+    Enemies enemy = new Enemies();
 
 
     public GameCanvas() {
@@ -39,23 +38,13 @@ public class GameCanvas extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        GameObject.add(player);
+        GameObject.add(enemy);
     }
-
-    long lastTimeUpdate;
 
     public void render() {
         backGraphics.drawImage(background, 204, backGroundY, null);
-        player.render(backGraphics);
-        enemies.render(backGraphics);
-
-        for (PlayerSpell spell : spells) {
-            spell.render(backGraphics);
-        }
-
-        for (EnemiesBullets bullets : bullets){
-            bullets.render(backGraphics);
-        }
-
+        GameObject.renderAll(backGraphics);
         repaint();
     }
 
@@ -83,15 +72,6 @@ public class GameCanvas extends JPanel {
     }
 
     public void run() {
-        player.run();
-        player.shoot(spells);
-        for (PlayerSpell spell : spells) {
-            spell.run();
-        }
-        enemies.run();
-        enemies.shoot(bullets);
-        for (EnemiesBullets bullets: bullets){
-            bullets.run();
-        }
+        GameObject.runAll();
     }
 }

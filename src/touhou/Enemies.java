@@ -1,41 +1,61 @@
 package touhou;
 
+import bases.GameObject;
 import bases.Utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Enemies {
-    BufferedImage image;
+public class Enemies extends GameObject {
 
-    int x1 = 254;
-    int x2 = 382;
-    int x3 = 510;
+    int x = 382;
     int y = -20;
+
+    int cooldownCount;
+    boolean spellDisabled;
+    final int COOLDOWN_TIME = 100;
+
+    boolean goRight = true;
 
     public Enemies() {
         image = Utils.loadImage("assets/images/enemies/level0/blue/1.png");
     }
 
     public void render(Graphics graphics) {
-        graphics.drawImage(image, x1, y, null);
-        graphics.drawImage(image, x2, y, null);
-        graphics.drawImage(image, x3, y, null);
+        graphics.drawImage(image, x, y, null);
     }
 
     public void run() {
+        move();
+        shoot();
+    }
+
+    public void move() {
         y += 1;
         if (y >= 600) {
             y = -50;
         }
     }
 
-    public void shoot(ArrayList<EnemiesBullets> bullets) {
+    public void shoot() {
+
+        if (spellDisabled) {
+            cooldownCount++;
+            if (cooldownCount >= COOLDOWN_TIME) {
+                spellDisabled = false;
+                cooldownCount = 0;
+            }
+            return;
+
+        }
+
         EnemiesBullets newBullet = new EnemiesBullets();
-        newBullet.x = x1;
+        newBullet.x = x;
         newBullet.y = y;
-        bullets.add(newBullet);
+        GameObject.add(newBullet);
+
+        spellDisabled = true;
     }
 
 

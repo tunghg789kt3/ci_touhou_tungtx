@@ -1,5 +1,6 @@
 package touhou;
 
+import bases.GameObject;
 import bases.Utils;
 
 import java.awt.*;
@@ -9,12 +10,7 @@ import java.util.ArrayList;
 
 import static java.awt.event.KeyEvent.VK_Z;
 
-public class Player {
-    BufferedImage image;
-
-
-    public int x = 384;
-    public int y = 500;
+public class Player extends GameObject {
 
     boolean rightPressed;
     boolean leftPressed;
@@ -26,17 +22,16 @@ public class Player {
 
     final int SPEED = 3;
 
-    final int LEFT = 188;
-    final int RIGHT = 572;
-    final int TOP = -24;
-    final int BOTTOM = 550;
+
+
+    boolean spellDisabled;
+    int cooldownCount;
+    final int COOLDOWN_TIME = 10;
 
     public Player() {
+        x = 384;
+        y = 500;
         image = Utils.loadImage("assets/images/players/straight/0.png");
-    }
-
-    public void render(Graphics graphics) {
-        graphics.drawImage(image, x, y, null);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -70,13 +65,19 @@ public class Player {
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             upPressed = false;
-        }if (e.getKeyCode() == VK_Z) {
+        }
+        if (e.getKeyCode() == VK_Z) {
             zPressed = false;
         }
 
     }
 
     public void run() {
+        move();
+        shoot();
+    }
+
+    private void move() {
         int vx = 0;
         int vy = 0;
 
@@ -102,24 +103,26 @@ public class Player {
         y = (int) clamp(y, TOP, BOTTOM);
     }
 
-    public void shoot(ArrayList<PlayerSpell> spells){
+    public void shoot() {
+
+        if (spellDisabled){
+            cooldownCount++;
+            if (cooldownCount >= COOLDOWN_TIME){
+                spellDisabled = false;
+                cooldownCount = 0;
+            }
+            return;
+        }
+
         if (zPressed) {
             PlayerSpell newSpell = new PlayerSpell();
             newSpell.x = x;
             newSpell.y = y;
-            spells.add(newSpell);
-        }
+            GameObject.add(newSpell);
 
+            spellDisabled = true;
+        }
     }
 
-    private float clamp(float value, float min, float max) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
 
-        return value;
-    }
 }
