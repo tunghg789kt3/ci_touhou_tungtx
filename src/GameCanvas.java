@@ -1,8 +1,7 @@
 import bases.GameObject;
-import touhou.Enemies;
-import touhou.EnemiesBullets;
-import touhou.Player;
-import touhou.PlayerSpell;
+import touhou.enemies.Enemy;
+import touhou.enemies.EnemySpawner;
+import touhou.players.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,9 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-
-import static java.awt.event.KeyEvent.*;
 
 public class GameCanvas extends JPanel {
 
@@ -25,7 +21,7 @@ public class GameCanvas extends JPanel {
     Graphics backGraphics;
 
     Player player = new Player();
-    Enemies enemy = new Enemies();
+    Enemy enemy = new Enemy();
 
 
     public GameCanvas() {
@@ -39,11 +35,11 @@ public class GameCanvas extends JPanel {
             e.printStackTrace();
         }
         GameObject.add(player);
-        GameObject.add(enemy);
+        GameObject.add(new EnemySpawner());
     }
 
     public void render() {
-        backGraphics.drawImage(background, 204, backGroundY, null);
+        backGraphics.drawImage(background, 0, backGroundY, null);
         GameObject.renderAll(backGraphics);
         repaint();
     }

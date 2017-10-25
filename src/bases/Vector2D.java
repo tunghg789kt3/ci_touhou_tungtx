@@ -19,8 +19,8 @@ public class Vector2D {
         this.y = y;
     }
 
-    public void print() {
-        System.out.println(toString());
+    public void set(Vector2D other){
+        this.set(other.x , other.y);
     }
 
     @Override
@@ -48,17 +48,25 @@ public class Vector2D {
         return new Vector2D(this.x + otherX, this.y + otherY);
     }
 
-    public Vector2D add(Vector2D otherVector) {
-        return new Vector2D(this.x + otherVector.x, this.y + otherVector.y);
+    public Vector2D add(Vector2D other) {
+        return add(other.x, other.y);
     }
 
-    public void subtractBy(float x, Float y) {
+    public void subtractBy(float x, float y) {
         this.x -= x;
         this.y -= y;
     }
 
-    public void subtract(Vector2D otherVector) {
-        this.subtractBy(otherVector.x,otherVector.y);
+    public void subtractBy(Vector2D otherVector) {
+        subtractBy(otherVector.x, otherVector.y);
+    }
+
+    public Vector2D subtract(float x, float y) {
+        return new Vector2D(this.x - x, this.y - y);
+    }
+
+    public Vector2D subtract(Vector2D other) {
+        return subtract(other.x, other.y);
     }
 
     public void multiply(float number) {
@@ -66,8 +74,13 @@ public class Vector2D {
         this.y *= number;
     }
 
-    public void lenght() {
+    public float lenght() {
+        return (float) Math.sqrt(x * x + y * y);
+    }
 
+    public Vector2D normalize(){
+        float lenght = lenght();
+        return new Vector2D(this.x / lenght, this.y / lenght);
     }
 
 }

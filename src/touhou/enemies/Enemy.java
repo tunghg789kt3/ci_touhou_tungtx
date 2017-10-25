@@ -1,40 +1,36 @@
-package touhou;
+package touhou.enemies;
 
 import bases.GameObject;
 import bases.Utils;
+import bases.physic.BoxCollider;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
-public class Enemies extends GameObject {
-
-    int x = 382;
-    int y = -20;
+public class Enemy extends GameObject {
 
     int cooldownCount;
     boolean spellDisabled;
     final int COOLDOWN_TIME = 100;
 
+    public BoxCollider boxCollider;
+
     boolean goRight = true;
 
-    public Enemies() {
+    public Enemy() {
         image = Utils.loadImage("assets/images/enemies/level0/blue/1.png");
-    }
-
-    public void render(Graphics graphics) {
-        graphics.drawImage(image, x, y, null);
+        boxCollider = new BoxCollider(30,30);
     }
 
     public void run() {
         move();
         shoot();
+        boxCollider.position.set(this.position);
     }
 
     public void move() {
-        y += 1;
-        if (y >= 600) {
-            y = -50;
+        position.y += 1;
+        if (position.y >= 600) {
+            position.y = -50;
         }
     }
 
@@ -50,13 +46,15 @@ public class Enemies extends GameObject {
 
         }
 
-        EnemiesBullets newBullet = new EnemiesBullets();
-        newBullet.x = x;
-        newBullet.y = y;
+        EnemyBullets newBullet = new EnemyBullets();
+        newBullet.position.set(this.position);
         GameObject.add(newBullet);
 
         spellDisabled = true;
     }
 
 
+    public void getHit() {
+        isActive = false;
+    }
 }

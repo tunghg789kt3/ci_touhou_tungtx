@@ -1,12 +1,13 @@
-package touhou;
+package touhou.players;
 
 import bases.GameObject;
 import bases.Utils;
+import bases.Vector2D;
+import bases.physic.BoxCollider;
+import touhou.enemies.Enemy;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import static java.awt.event.KeyEvent.VK_Z;
 
@@ -22,16 +23,18 @@ public class Player extends GameObject {
 
     final int SPEED = 3;
 
-
+    public BoxCollider boxCollider;
 
     boolean spellDisabled;
     int cooldownCount;
     final int COOLDOWN_TIME = 10;
 
+
     public Player() {
-        x = 384;
-        y = 500;
+        position.x = 184;
+        position.y = 500;
         image = Utils.loadImage("assets/images/players/straight/0.png");
+        boxCollider = new BoxCollider(32,48);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -75,39 +78,41 @@ public class Player extends GameObject {
     public void run() {
         move();
         shoot();
+        boxCollider.position.set(this.position);
     }
 
     private void move() {
-        int vx = 0;
-        int vy = 0;
+        velocity.set(0, 0);
 
         if (rightPressed) {
-            vx += SPEED;
+            velocity.x += SPEED;
         }
 
         if (leftPressed) {
-            vx -= SPEED;
+            velocity.x -= SPEED;
         }
 
         if (downPressed) {
-            vy += SPEED;
+            velocity.y += SPEED;
         }
 
         if (upPressed) {
-            vy -= SPEED;
+            velocity.y -= SPEED;
         }
-        x = x + vx;
-        y = y + vy;
 
-        x = (int) clamp(x, LEFT, RIGHT);
-        y = (int) clamp(y, TOP, BOTTOM);
+        position.addUp(velocity);
+
+        position.x = (int) clamp(position.x, LEFT, RIGHT);
+        position.y = (int) clamp(position.y, TOP, BOTTOM);
+
+
     }
 
     public void shoot() {
 
-        if (spellDisabled){
+        if (spellDisabled) {
             cooldownCount++;
-            if (cooldownCount >= COOLDOWN_TIME){
+            if (cooldownCount >= COOLDOWN_TIME) {
                 spellDisabled = false;
                 cooldownCount = 0;
             }
@@ -116,13 +121,19 @@ public class Player extends GameObject {
 
         if (zPressed) {
             PlayerSpell newSpell = new PlayerSpell();
-            newSpell.x = x;
-            newSpell.y = y;
+            newSpell.position.set(this.position);
             GameObject.add(newSpell);
 
             spellDisabled = true;
         }
     }
 
+    public void getHit() {
+        isActive = false;
+    }
 
+//    @Override
+//    public void render(Graphics graphics) {
+//        graphics.drawImage(image,(int) position.x - image.getWidth()/2, (int) position.y,null);
+//    }
 }
