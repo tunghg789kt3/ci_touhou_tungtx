@@ -1,6 +1,7 @@
 package bases;
 
 import bases.physic.BoxCollider;
+import bases.physic.PhysicsBody;
 import touhou.enemies.Enemy;
 import touhou.players.Player;
 
@@ -75,24 +76,15 @@ public class GameObject {
         return value;
     }
 
-    public static Enemy collideWith(BoxCollider boxCollider) {
+    public static <T extends PhysicsBody> T collideWith(BoxCollider boxCollider, Class<T> cls) {
+
         for (GameObject gameObject : gameObjects) {
-            if (gameObject.isActive && gameObject instanceof Enemy) {
-                Enemy enemy = (Enemy) gameObject;
-                if (enemy.boxCollider.collideWith(boxCollider)) {
-                    return enemy;
-                }
-            }
-        }
-        return null;
-    }
-    public static Player collodeWith(BoxCollider boxCollider){
-        for (GameObject gameObject : gameObjects){
-            if (gameObject.isActive && gameObject instanceof  Player){
-                Player player = (Player) gameObject;
-                if (player.boxCollider.collideWith(boxCollider)){
-                    return player;
-                }
+            if (!gameObject.isActive) continue;
+            if (!(gameObject instanceof PhysicsBody)) continue;
+            if (!(gameObject.getClass().equals(cls)))continue;
+            BoxCollider otherBoxCollider = ((PhysicsBody) gameObject).getBoxCollider();
+            if (otherBoxCollider.collideWith(boxCollider)){
+                return (T) gameObject;
             }
         }
         return null;

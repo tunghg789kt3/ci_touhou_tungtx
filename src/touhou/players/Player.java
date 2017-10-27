@@ -4,6 +4,7 @@ import bases.GameObject;
 import bases.Utils;
 import bases.Vector2D;
 import bases.physic.BoxCollider;
+import bases.physic.PhysicsBody;
 import touhou.enemies.Enemy;
 
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.awt.event.KeyEvent;
 
 import static java.awt.event.KeyEvent.VK_Z;
 
-public class Player extends GameObject {
+public class Player extends GameObject implements PhysicsBody{
 
     boolean rightPressed;
     boolean leftPressed;
@@ -21,7 +22,7 @@ public class Player extends GameObject {
     boolean zPressed;
 
 
-    final int SPEED = 3;
+    final int SPEED = 4;
 
     public BoxCollider boxCollider;
 
@@ -34,7 +35,7 @@ public class Player extends GameObject {
         position.x = 184;
         position.y = 500;
         image = Utils.loadImage("assets/images/players/straight/0.png");
-        boxCollider = new BoxCollider(32,48);
+        boxCollider = new BoxCollider(5,5);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -78,7 +79,6 @@ public class Player extends GameObject {
     public void run() {
         move();
         shoot();
-        boxCollider.position.set(this.position);
     }
 
     private void move() {
@@ -105,7 +105,7 @@ public class Player extends GameObject {
         position.x = (int) clamp(position.x, LEFT, RIGHT);
         position.y = (int) clamp(position.y, TOP, BOTTOM);
 
-
+        boxCollider.position.set(this.position);
     }
 
     public void shoot() {
@@ -132,7 +132,12 @@ public class Player extends GameObject {
         isActive = false;
     }
 
-//    @Override
+    @Override
+    public BoxCollider getBoxCollider() {
+        return boxCollider;
+    }
+
+    //    @Override
 //    public void render(Graphics graphics) {
 //        graphics.drawImage(image,(int) position.x - image.getWidth()/2, (int) position.y,null);
 //    }
